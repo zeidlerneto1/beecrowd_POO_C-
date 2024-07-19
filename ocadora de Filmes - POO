@@ -1,0 +1,214 @@
+#include<iostream>
+#include<iomanip>
+#include<string>
+
+using namespace std;
+
+class DVD
+{
+   private:
+     string titulo,estilo;
+     int ano,duracao,codigo;
+   public:
+     string getTitulo() { return titulo; }
+     string getEstilo() { return estilo; } 
+     int    getAno()    { return ano;    }
+     int    getDuracao(){ return duracao;}
+     int    getCodigo() { return codigo; }
+
+     void   setTitulo(string v) { titulo=v;   }
+     void   setEstilo(string v) { estilo=v;   }
+     void   setAno(int v)       { ano = v;    }
+     void   setDuracao(int v)   { duracao = v;}
+     void   setCodigo(int v)    { codigo = v; }
+    
+     double aluguel() { return ano>=2020? 5 : 3; }
+     void ler();  
+};
+
+void DVD::ler()
+{
+    cin >> codigo;
+    cin.ignore();
+    getline(cin,titulo);
+    getline(cin,estilo);
+    cin >> ano >> duracao;
+}
+
+class Locadora  
+{
+   private:
+       DVD vet[100];
+       int qtd = 0; 
+       int obterIndice(int cod);
+   public:
+       void inserir(DVD d);
+       void remover(int cod);
+       void alterar(int cod, DVD d);
+       double aluguel(int cod);
+       void listar();
+       void listar(string parte);
+       bool existe(int cod);       
+};
+
+
+int Locadora::obterIndice(int cod)
+{
+   for(int i=0;i<qtd;i++)
+     if (vet[i].getCodigo() == cod)
+        return i;
+   return -1;
+}
+
+/*int Locadora::obterIndice(int cod)
+{
+   int i;
+   bool achou = false;
+   i = 0;
+   while  (i<qtd && !achou)
+     if (vet[i].getCodigo() == cod)
+        achou = true;
+     else
+        i++;
+
+   return achou?i:-1;
+}*/
+
+void Locadora::inserir(DVD d)
+{
+   vet[qtd] = d;
+   qtd++;
+}
+void Locadora::remover(int cod)
+{
+   int pos = obterIndice(cod);
+   if (pos>-1)
+   {
+      for(int i=pos;i<qtd-1;i++)
+         vet[i] = vet[i+1];  
+      qtd--; 
+   }
+}
+void Locadora::alterar(int cod, DVD d)
+{
+   int pos = obterIndice(cod);
+   if (pos>-1)
+      vet[pos] = d;
+}
+double Locadora::aluguel(int cod)
+{
+   int pos = obterIndice(cod);
+   return (pos>-1)? vet[pos].aluguel() : 0;
+}
+bool Locadora::existe(int cod)
+{
+   return obterIndice(cod)>-1;
+}
+
+void Locadora::listar()
+{
+   cout << fixed << setprecision(2);
+   cout << left << setfill('0') << setw(3) << "COD" << "!"<< setfill(' ') << setw(30) << "Titulo" << "!" << setw(20) << "Estilo" << "!R$" << setw(10) << right << "aluguel" << endl;
+   for(int i=0;i<qtd;i++)
+   {
+      DVD d = vet[i];
+      cout << right << setfill('0') << setw(3) << d.getCodigo() << "!"<< left << setfill(' ') << setw(30) << d.getTitulo() << "!" << setw(20) << d.getEstilo() << "!R$" << setw(10) << right << d.aluguel() << endl;
+   }
+}
+
+void Locadora::listar(string parte)
+{
+   cout << fixed << setprecision(2);
+   cout << left << setfill('0') << setw(3) << "COD" << "!"<< setfill(' ') << setw(30) << "Titulo" << "!" << setw(20) << "Estilo" << "!R$" << setw(10) << right << "aluguel" << endl;
+   for(int i=0;i<qtd;i++)
+   {
+      DVD d = vet[i];
+      if ( d.getTitulo().find(parte) != string::npos || d.getEstilo().find(parte) != string::npos )
+         cout << right << setfill('0') << setw(3) << d.getCodigo() << "!"<< left << setfill(' ') << setw(30) << d.getTitulo() << "!" << setw(20) << d.getEstilo() << "!R$" << setw(10) << right << d.aluguel() << endl;
+   }
+}
+
+
+int menu()
+{
+   int opc;
+   do{
+     cout << "1 - inserir um filme" << endl;
+     cout << "2 - remover dado o codigo" << endl;
+     cout << "3 - alterar dado o codigo" << endl;
+     cout << "4 - pesquisar valor do aluguel dado o codigo" << endl;
+     cout << "5 - listar todos" << endl;
+     cout << "6 - listar dado parte titulo ou estilo" << endl;
+     cout << "7 - sair" << endl;
+     cout << "Entre com a sua escolha:" << endl;
+     cin >> opc;
+   }while(opc<1 || opc>7);
+   cin.ignore();
+   return opc;
+}
+
+void esperarOk()
+{
+   string txt;
+   do{
+      cin >> txt;
+   } while (txt!="ok");
+}
+
+int main()
+{
+   int cod;
+   string str;
+   DVD ficha;
+   Locadora loc;
+   bool acabou = false;
+   while (!acabou)
+      switch (menu())
+      {
+          case 1: //1 - inserir um filme
+              ficha.ler();
+              loc.inserir(ficha);
+              break;
+          case 2: //2 - remover dado o codigo
+              cin >> cod;
+              if (loc.existe(cod))
+              {
+                 loc.remover(cod);
+                 cout << "filme removido com sucesso!" << endl; 
+              }
+              else
+                 cout << "filme nao encontrado!" << endl; 
+              break;
+          case 3: //3 - alterar dado o codigo
+              cin >> cod;
+              if (loc.existe(cod))
+              {
+                 ficha.ler();
+                 loc.alterar(cod,ficha);
+                 cout << "filme atualizado com sucesso!" << endl; 
+              }
+              else
+                 cout << "filme nao encontrado!" << endl; 
+              break;
+          case 4: //4 - pesquisar valor do aluguel dado o codigo
+              cin >> cod;
+              if (loc.existe(cod))
+                 cout << "aluguel = R$" << fixed << setprecision(2) << right << setw(10) << loc.aluguel(cod) << endl; 
+              else
+                 cout << "filme nao encontrado!" << endl; 
+              break;
+          case 5: //5 - listar todos
+              loc.listar();
+              esperarOk();
+              break;
+          case 6: //6 - listar dado parte titulo ou estilo
+              getline(cin, str);
+              loc.listar(str);
+              esperarOk();
+              break;
+          case 7: //7 - sair
+              acabou = true;
+              break;
+      }
+   return 0;
+}
