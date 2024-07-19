@@ -1,0 +1,138 @@
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+
+class Animal 
+{
+    private:
+        string nome;
+
+    public:
+        Animal() { }
+        ~Animal() { }
+        virtual void emitirSom() { cout << "aa"; }
+        string obterNome() { return nome; }
+        void definirNome(string novoNome) { nome = novoNome; }
+};
+
+class Cachorro : public Animal 
+{
+    public:
+        void emitirSom() override { cout << "AU AU!" << endl; }
+};
+
+class Gato : public Animal 
+{
+    public:
+        void emitirSom() override { cout << "MIAU MIAU!" << endl; }
+};
+
+class Vaca : public Animal 
+{
+    public:
+        void emitirSom() override { cout << "MUUUUU!" << endl; }
+};
+
+class Sapo : public Animal {
+public:
+    void emitirSom() override { cout << "WEB!" << endl; }
+};
+
+class Cavalo : public Animal 
+{
+    public:
+        void emitirSom() override { cout << "IRRINNN!" << endl; }
+};
+
+class ColecaoAnimais 
+{
+    private:
+        Animal* animais[100];
+        int quantidade = 0;
+
+    public:
+        ~ColecaoAnimais();
+        void inserir();
+        void consultar(string nome);
+        void limpar();
+};
+
+ColecaoAnimais::~ColecaoAnimais()
+{
+    for (int i = 0; i < quantidade; i++) {
+        Animal* animal = animais[i];
+        delete animal;
+    }
+    quantidade = 0;
+}
+
+Animal* criarAnimal()
+{
+    string tipo;
+    do {
+        cin >> tipo;
+    } while (tipo != "cao" && tipo != "gato" && tipo != "vaca" && tipo != "sapo" && tipo != "cavalo");
+
+    if (tipo == "cao") return new Cachorro();
+    else if (tipo == "gato") return new Gato(); 
+    else if (tipo == "vaca") return new Vaca();
+    else if (tipo == "sapo") return new Sapo();
+    else if (tipo == "cavalo") return new Cavalo();
+    else return nullptr;
+}
+
+void ColecaoAnimais::consultar(string nome) 
+{
+    bool encontrado = false;
+    for (int i = 0; i < quantidade; i++) {
+        if (animais[i]->obterNome() == nome) {
+            encontrado = true;
+            cout << animais[i]->obterNome() << " ";
+            animais[i]->emitirSom();
+        }
+    }
+    if (!encontrado) cout << nome << " nao encontrado!" << endl;
+}
+
+void ColecaoAnimais::inserir() 
+{
+    string nome;
+    animais[quantidade] = criarAnimal();
+    cin.ignore();
+    getline(cin, nome);
+    animais[quantidade]->definirNome(nome);
+    quantidade++;
+}
+
+void ColecaoAnimais::limpar() 
+{
+    for (int i = 0; i < quantidade; i++)
+        delete animais[i];
+    quantidade = 0;
+}
+
+int main() 
+{
+    
+    ColecaoAnimais colecao;
+    bool sair = false;
+    string tipo, nome;
+    while (!sair) {
+        cin >> tipo;
+        if (tipo == "inserir")
+            colecao.inserir();
+        else if (tipo == "consultar") {
+            cin.ignore();
+            getline(cin, nome);
+            colecao.consultar(nome);
+            }
+        else if (tipo == "limpar") 
+            colecao.limpar();
+        else if (tipo == "sair")
+            sair = true;
+    }
+
+    return 0;
+}
