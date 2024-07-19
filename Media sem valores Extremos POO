@@ -1,0 +1,71 @@
+#include <iostream>
+#include <iomanip>
+ 
+using namespace std;
+
+class TVet{
+    private:
+        int n;
+        double num[100];
+        double numMaior;
+        double numMenor;
+        double media;
+    public:
+        void ler();
+        double maior();
+        double menor();
+        double mediaEx();
+};
+
+void TVet::ler(){
+    cin >> n;
+    for(int i = 0; i < n; i++) {
+        cin >> num[i];
+    }
+}
+
+double TVet::maior(){
+    numMaior = num[0];
+    for(int i = 0; i < n; i++) {
+        if(num[i] > numMaior) {
+            numMaior = num[i];
+        }
+    }
+    return numMaior;
+}
+
+double TVet::menor(){
+    numMenor = num[0];
+    for(int i = 0; i < n; i++) {
+        if(num[i] < numMenor) {
+            numMenor = num[i];
+        }
+    }
+    return numMenor;
+}
+
+double TVet::mediaEx(){
+    int j = 0;
+    media = 0;
+    for(int i = 0; i < n; i++) {
+        if(num[i] == numMaior || num[i] == numMenor) {
+            j++;
+        }
+        else {
+        media = media + num[i];
+        }
+    }
+    return media/(n-j);
+}
+ 
+int main() {
+    
+    TVet v;
+    v.ler();
+    cout << fixed << setprecision(2);
+    cout << "Maior: " << v.maior() << endl;
+    cout << "Menor: " << v.menor() << endl;
+    cout << "Media sem extremos: " << v.mediaEx() << endl;
+    
+    return 0;
+}
