@@ -1,0 +1,50 @@
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
+#define max 100
+
+
+class TMatriz{
+    private:
+        int linhas,colunas;
+        char matrix[max][max];
+    public:
+        void ler();
+        void transposta();
+        void mostrar();
+};
+
+void TMatriz::ler(){
+cin >> linhas >> colunas;
+cin.ignore();
+    for(int i=0;i<linhas;i++)
+        for(int j=0;j<colunas;j++)
+            cin >> matrix[i][j];
+}
+
+void TMatriz::transposta(){
+char t[max][max];
+    for(int i=0;i<linhas;i++)
+        for(int j=0;j<colunas;j++) 
+            t[j][i]=matrix[i][j];
+    for (int i=0;i<colunas;i++)
+        for (int j=0; j<linhas;j++)
+            matrix[i][j] = t[i][j];
+}
+
+void TMatriz::mostrar(){
+    for (int i=0; i<colunas;i++) {
+        for (int j=0; j<linhas;j++) {cout << matrix[i][j];}
+        cout << endl;
+    }
+}
+
+int main(){
+    TMatriz a;
+	a.ler();
+	a.transposta();
+    a.mostrar();
+    return 0;
+}
