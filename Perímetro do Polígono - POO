@@ -1,0 +1,51 @@
+#include <iostream>
+#include <iomanip>
+#include <cmath>
+
+using namespace std;
+
+#define max_vertices 100
+
+class TPoligono{
+private:
+    int NVertices = 0;
+    double Xvertices[max_vertices];
+    double Yvertices[max_vertices];
+public:
+    TPoligono();
+    void ler();
+    double perimetro();
+};
+
+TPoligono::TPoligono(){
+    for (int i = 0; i < max_vertices; i++){
+        Xvertices[i] = 0.0;
+        Yvertices[i] = 0.0;
+    }
+}
+
+void TPoligono::ler(){
+    cin >> NVertices;
+    for (int i = 0; i < NVertices; i++){
+        cin >> Xvertices[i] >> Yvertices[i];
+    }
+}
+
+double TPoligono::perimetro(){
+double perimetro = 0.0;
+    for (int i = 0; i < NVertices; i++){
+        int j = (i + 1) % NVertices; 
+        double dx = Xvertices[i] - Xvertices[j];
+        double dy = Yvertices[i] - Yvertices[j];
+        perimetro += sqrt(dx * dx + dy * dy);
+    }
+    return perimetro;
+}
+int main()
+    {
+        TPoligono p;
+	    p.ler();
+        cout << fixed << setprecision(2);
+        cout << "perimetro - " << p.perimetro() << endl;
+        return 0;
+    }
