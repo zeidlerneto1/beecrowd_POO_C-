@@ -1,0 +1,38 @@
+#include <iostream>
+#include <iomanip>
+#include <cmath>
+
+using namespace std;
+
+class TPolinomio {
+private:
+    double coeficientes[100];
+    int expoentes[100];
+    int nT;
+
+public:
+    void ler() {
+        cin >> nT;
+        for (int i = 0; i < nT; i++) {
+            cin >> coeficientes[i] >> expoentes[i];
+        }
+    }
+
+    float calcular(float x) {
+        float resultado = 0.0;
+        for (int i = 0; i < nT; i++) {
+            resultado += coeficientes[i] * pow(x, expoentes[i]);
+        }
+        return resultado;
+    }
+};
+
+int main() {
+    TPolinomio p;
+    float x;
+    p.ler();
+    cin >> x;
+    cout << fixed << setprecision(2);
+    cout << "p(" << x << ") = " << p.calcular(x) << endl;
+    return 0;
+}
