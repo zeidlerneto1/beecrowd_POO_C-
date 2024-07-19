@@ -1,0 +1,277 @@
+#include<iostream>
+#include<iomanip>
+#include<string>
+
+using namespace std;
+
+class ProdutoAlugavel
+{
+   private:
+     string titulo,estilo;
+     int ano,codigo;
+   public:
+     string getTitulo() { return titulo; }
+     string getEstilo() { return estilo; } 
+     int    getAno()    { return ano;    }
+     int    getCodigo() { return codigo; }
+
+     void   setTitulo(string v) { titulo=v;   }
+     void   setEstilo(string v) { estilo=v;   }
+     void   setAno(int v)       { ano = v;    }
+     void   setCodigo(int v)    { codigo = v; }
+    
+     virtual double aluguel()=0; 
+     virtual void ler();  
+};
+
+void ProdutoAlugavel::ler()
+{
+    cin >> codigo;
+    cin.ignore();
+    getline(cin,titulo);
+    getline(cin,estilo);
+    cin >> ano;
+    cin.ignore();
+}
+
+class Filme : public ProdutoAlugavel
+{
+   private:
+      int duracao;
+   public:
+      void ler();
+      int    getDuracao(){ return duracao;}
+      void   setDuracao(int v)   { duracao = v;}
+};
+
+void Filme::ler()
+{
+    ProdutoAlugavel::ler();
+    cin >> duracao;
+    cin.ignore();
+}
+
+
+class DVD : public Filme
+{
+   public:
+     double aluguel() { return getAno()>=2020? 5 : 3; }
+};
+
+class BlueRay : public Filme
+{
+   public:
+     double aluguel() { return getAno()>=2020? 7 : 4; }
+};
+
+class Jogo : public ProdutoAlugavel
+{
+   private:
+      int numJogs;
+      string plataforma;
+   public:
+      void ler();
+      int    getNumJogadores()        { return numJogs;    }
+      void   setNumJogadores(int v)   { numJogs = v;       }
+      string getPlataforma()          { return plataforma; }
+      void   setPlataforma(string v)  { plataforma = v;    } 
+      double aluguel()                { return getAno()>=2020? 5 : (getAno()<2010? 3 : 4) ; }
+};
+
+void Jogo::ler()
+{
+    ProdutoAlugavel::ler();
+    getline(cin, plataforma);
+    cin >> numJogs;
+    cin.ignore();
+}
+
+class Locadora  
+{
+   private:
+       ProdutoAlugavel* vet[100];
+       int qtd = 0; 
+       int obterIndice(int cod);
+   public:
+       ~Locadora();
+       void inserir(ProdutoAlugavel* d);
+       void remover(int cod);
+       void alterar(int cod, ProdutoAlugavel* d);
+       double aluguel(int cod);
+       void listar();
+       void listar(string parte);
+       bool existe(int cod);       
+};
+
+Locadora::~Locadora()
+{
+   for(int i=0;i<qtd;i++)
+      delete vet[i];
+   qtd = 0;
+}
+
+int Locadora::obterIndice(int cod)
+{
+   for(int i=0;i<qtd;i++)
+     if (vet[i]->getCodigo() == cod)
+        return i;
+   return -1;
+}
+
+/*int Locadora::obterIndice(int cod)
+{
+   int i;
+   bool achou = false;
+   i = 0;
+   while  (i<qtd && !achou)
+     if (vet[i]->getCodigo() == cod)
+        achou = true;
+     else
+        i++;
+
+   return achou?i:-1;
+}*/
+
+void Locadora::inserir(ProdutoAlugavel*  d)
+{
+   vet[qtd] = d;
+   qtd++;
+}
+void Locadora::remover(int cod)
+{
+   int pos = obterIndice(cod);
+   if (pos>-1)
+   {
+      delete vet[pos]; 
+      for(int i=pos;i<qtd-1;i++)
+         vet[i] = vet[i+1];  
+      qtd--; 
+   }
+}
+void Locadora::alterar(int cod, ProdutoAlugavel* d)
+{
+   int pos = obterIndice(cod);
+   if (pos>-1)
+   {
+      delete vet[pos];
+      vet[pos] = d;
+   }
+}
+double Locadora::aluguel(int cod)
+{
+   int pos = obterIndice(cod);
+   return (pos>-1)? vet[pos]->aluguel() : 0;
+}
+bool Locadora::existe(int cod)
+{
+   return obterIndice(cod)>-1;
+}
+
+void Locadora::listar()
+{
+   cout << fixed << setprecision(2);
+   cout << left << setfill('0') << setw(3) << "COD" << "!"<< setfill(' ') << setw(30) << "Titulo" << "!" << setw(20) << "Estilo" << "!R$" << setw(10) << right << "aluguel" << endl;
+   for(int i=0;i<qtd;i++)
+   {
+      ProdutoAlugavel*  d = vet[i];
+      cout << right << setfill('0') << setw(3) << d->getCodigo() << "!"<< left << setfill(' ') << setw(30) << d->getTitulo() << "!" << setw(20) << d->getEstilo() << "!R$" << setw(10) << right << d->aluguel() << endl;
+   }
+}
+
+void Locadora::listar(string parte)
+{
+   cout << fixed << setprecision(2);
+   cout << left << setfill('0') << setw(3) << "COD" << "!"<< setfill(' ') << setw(30) << "Titulo" << "!" << setw(20) << "Estilo" << "!R$" << setw(10) << right << "aluguel" << endl;
+   for(int i=0;i<qtd;i++)
+   {
+      ProdutoAlugavel*  d = vet[i];
+      if ( d->getTitulo().find(parte) != string::npos || d->getEstilo().find(parte) != string::npos )
+         cout << right << setfill('0') << setw(3) << d->getCodigo() << "!"<< left << setfill(' ') << setw(30) << d->getTitulo() << "!" << setw(20) << d->getEstilo() << "!R$" << setw(10) << right << d->aluguel() << endl;
+   }
+}
+
+
+int menu()
+{
+   int opc;
+   do{
+     cout << "1 - inserir um filme em DVD" << endl;
+     cout << "2 - inserir um filme em Blue-Ray" << endl;
+     cout << "3 - inserir um jogo" << endl;
+     cout << "4 - remover dado o codigo" << endl;
+     cout << "5 - pesquisar o valor do alugues dados o codigo" << endl;
+     cout << "6 - listar todos" << endl;
+     cout << "7 - listar todos dados parte do nome ou titulo" << endl;
+     cout << "8 - sair" << endl;
+     cout << "Entre com a sua escolha:" << endl;
+     cin >> opc;
+   }while(opc<1 || opc>8);
+   cin.ignore();
+   return opc;
+}
+
+void esperarOk()
+{
+   string txt;
+   do{
+      cin >> txt;
+   } while (txt!="ok");
+}
+
+int main()
+{
+   int cod;
+   string str;
+   ProdutoAlugavel* ficha;
+   Locadora loc;
+   bool acabou = false;
+   while (!acabou)
+      switch (menu())
+      {
+          case 1: //1 - inserir um filme em DVD
+              ficha = new DVD();
+              ficha->ler();
+              loc.inserir(ficha);
+              break;
+          case 2: //2 - inserir um filme em Blue-Ray
+              ficha = new BlueRay();
+              ficha->ler();
+              loc.inserir(ficha);
+              break;
+          case 3: //3 - inserir um jogo
+              ficha = new Jogo();
+              ficha->ler();
+              loc.inserir(ficha);
+              break;
+          case 4: //4 - remover dado o codigo
+              cin >> cod;
+              if (loc.existe(cod))
+              {
+                 loc.remover(cod);
+                 cout << "item removido com sucesso!" << endl; 
+              }
+              else
+                 cout << "item nao encontrado!" << endl; 
+              break;
+          case 5: //5 - pesquisar valor do aluguel dado o codigo
+              cin >> cod;
+              if (loc.existe(cod))
+                 cout << "aluguel = R$" << fixed << setprecision(2) << right << setw(10) << loc.aluguel(cod) << endl; 
+              else
+                 cout << "item nao encontrado!" << endl; 
+              break;
+          case 6: //6 - listar todos
+              loc.listar();
+              esperarOk();
+              break;
+          case 7: //7 - listar dado parte titulo ou estilo
+              getline(cin, str);
+              loc.listar(str);
+              esperarOk();
+              break;
+          case 8: //8 - sair
+              acabou = true;
+              break;
+      }
+   return 0;
+}
