@@ -1,0 +1,37 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class hospede {
+private:
+    string nome;
+    string cpf;
+    char sexo;
+    int quarto;
+
+public:
+    void lerDados();
+    void mostrarDados();
+};
+
+void hospede::lerDados(){
+        getline(cin, nome);
+        getline(cin, cpf);
+        cin >> sexo;
+        cin >> quarto;
+    }
+void hospede::mostrarDados() {
+        cout << "Nome: " << nome << endl;
+        cout << "CPF: " << cpf << endl;
+        cout << "Sexo: " << sexo << endl;
+        cout << "Quarto: " << quarto << endl;
+    }
+
+int main() {
+    hospede hospedemain;
+    hospedemain.lerDados();
+    hospedemain.mostrarDados();
+
+    return 0;
+}
