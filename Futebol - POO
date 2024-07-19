@@ -1,0 +1,99 @@
+#include <iostream>
+#include <string>
+#include <iomanip>
+
+using namespace std;
+
+class jogador {
+private:
+    string nome;
+    int idade;
+    string nacionalidade;
+    double altura;
+    double peso;
+public:
+    jogador(string& _nome, int _idade, string& _nacionalidade, double _altura, double _peso)
+        : nome(_nome), idade(_idade), nacionalidade(_nacionalidade), altura(_altura), peso(_peso) {}
+    string getnome() { return nome; }
+    int getidade()  { return idade; }
+    string getnacionalidade()  { return nacionalidade; }
+    double getaltura()  { return altura; }
+    double getpeso() { return peso; }
+    void imprimir();
+};
+class Posicao : public jogador {
+private:
+    string posicao;
+public:
+    Posicao(string& _nome, int _idade,string& _nacionalidade, double _altura, double _peso, string& _posicao)
+        : jogador(_nome, _idade, _nacionalidade, _altura, _peso), posicao(_posicao) {}
+    string getposicao(); //{ return posicao; }
+    void imprimir() ;
+    int tempoAposentadoria() ;
+};
+string Posicao::getposicao() {
+    if (posicao == "defesa")
+    {
+        return "Defesa";
+    }
+    else if (posicao == "ataque")
+    {
+        return "Atacante";
+    }
+    else if (posicao == "meio campo")
+    {
+        return "Meio Campo";
+    }
+    else
+    {
+        return posicao;
+    }
+}
+
+int Posicao::tempoAposentadoria()  {
+    if (posicao == "defesa")
+        return 40 - getidade();
+    else if (posicao == "meio campo")
+        return 38 - getidade();
+    else if (posicao == "ataque")
+        return 35 - getidade();
+    else
+        return -1;
+}
+void jogador::imprimir() {
+    cout << "nome          : " << getnome() << endl;
+    cout << "posicao       : ";
+}
+void Posicao::imprimir() {
+jogador::imprimir();
+    cout << getposicao() << endl;
+    cout << "idade         : " << getidade() << " anos" << endl;
+    cout << "nacionalidade : " << getnacionalidade() << endl;
+    cout << "altura        : " << getaltura() << " m" << endl;
+    cout << "peso          : " << getpeso() << " kg" << endl;
+}
+int main() {
+int quantidade;
+cin >> quantidade;
+    for (int i = 0; i < quantidade; i++) {
+        string posicao, nome, nacionalidade;
+        int idade;
+        double altura, peso;
+        cin.ignore();
+        getline(cin, posicao);
+        getline(cin, nome);
+        cin >> idade;
+        cin.ignore();
+        getline(cin, nacionalidade);
+        cin >> altura;
+        cin >> peso;
+        Posicao jogador(nome, idade, nacionalidade, altura, peso, posicao);
+        jogador.imprimir();
+        int tempoAposentadoria = jogador.tempoAposentadoria();
+        if (tempoAposentadoria >= 0)
+            cout << "tempo util    : " << tempoAposentadoria << " anos" << endl;
+        else
+        cout << endl;
+    }
+return 0;
+}
